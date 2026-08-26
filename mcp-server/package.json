@@ -1,0 +1,17 @@
+{
+  "name": "llm-wiki-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server that exposes the markdown LLM wiki through a PostgreSQL-backed search index",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "sync": "node sync.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "dotenv": "^16.4.5",
+    "gray-matter": "^4.0.3",
+    "pg": "^8.13.1"
+  }
+}

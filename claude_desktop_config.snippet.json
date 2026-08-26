@@ -1,0 +1,12 @@
+{
+  "_comment": "Merge this into your Claude Desktop config (not a standalone file). See the README's 'Add to Claude Desktop' section for the config file location on your OS.",
+  "mcpServers": {
+    "llm-wiki": {
+      "command": "node",
+      "args": ["/ABSOLUTE/PATH/TO/karpathy-llm-wiki/mcp-server/index.js"],
+      "env": {
+        "DATABASE_URL": "postgresql://wiki_user:wiki_pass@localhost:5432/llm_wiki"
+      }
+    }
+  }
+}
