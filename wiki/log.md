@@ -10,3 +10,8 @@
 - Note: all pages carry real-world factual content about actual people, tools,
   and concepts, but were bulk-generated as sample data to populate the graph —
   treat as a demo dataset, verify anything you rely on.
+
+## 2026-08-27
+
+- Audited the seeded wiki and repaired an accidental broken wikilink in
+    `wiki/pages/obsidian.md`; all 121 pages remain indexed and parse cleanly.
