@@ -8,7 +8,7 @@ updated: 2026-08-26
 
 # Obsidian
 
-Free local-first note-taking app that renders markdown files and their [[links]] as an interactive graph.
+Free local-first note-taking app that renders markdown files and their wikilinks as an interactive graph.
 
 ## Details
 

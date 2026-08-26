@@ -6,19 +6,58 @@
 // source of truth; this server only reads the Postgres index built by
 // sync.js — it never writes to raw/ or wiki/.
 
+import fs from "node:fs";
+import path from "node:path";
+import http from "node:http";
+import { randomUUID } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { pool } from "./lib/db.js";
 import { slugify } from "./lib/parseWiki.js";
+import { runSync } from "./sync.js";
 
-const server = new Server(
-  { name: "llm-wiki", version: "1.0.0" },
-  { capabilities: { tools: {} } }
-);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Each tool call needs its own Server instance in HTTP mode (the SDK ties a
+// Server to one transport/session); factor construction out so both the
+// stdio path and every HTTP session can build a fresh, identically wired one.
+function buildServer() {
+  const server = new Server(
+    { name: "llm-wiki", version: "1.0.0" },
+    { capabilities: { tools: {} } }
+  );
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
+  server.setRequestHandler(CallToolRequestSchema, async (req) => {
+    const { name, arguments: args = {} } = req.params;
+    try {
+      switch (name) {
+        case "wiki_search":
+          return await toolSearch(args);
+        case "wiki_get_page":
+          return await toolGetPage(args);
+        case "wiki_list_pages":
+          return await toolListPages(args);
+        case "wiki_related":
+          return await toolRelated(args);
+        case "wiki_lint":
+          return await toolLint();
+        case "wiki_recent_log":
+          return await toolRecentLog(args);
+        default:
+          return errorResult(`Unknown tool: ${name}`);
+      }
+    } catch (err) {
+      return errorResult(err.message || String(err));
+    }
+  });
+  return server;
+}
 
 const TOOLS = [
   {
@@ -57,7 +96,7 @@ const TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        type: { type: "string", enum: ["concept", "person", "tool", "source"] },
+        type: { type: "string", enum: ["concept", "person", "tool", "source", "organization"] },
         tag: { type: "string" },
         limit: { type: "number", description: "Max results (default 50)" },
       },
@@ -95,32 +134,6 @@ const TOOLS = [
     },
   },
 ];
-
-server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
-
-server.setRequestHandler(CallToolRequestSchema, async (req) => {
-  const { name, arguments: args = {} } = req.params;
-  try {
-    switch (name) {
-      case "wiki_search":
-        return await toolSearch(args);
-      case "wiki_get_page":
-        return await toolGetPage(args);
-      case "wiki_list_pages":
-        return await toolListPages(args);
-      case "wiki_related":
-        return await toolRelated(args);
-      case "wiki_lint":
-        return await toolLint();
-      case "wiki_recent_log":
-        return await toolRecentLog(args);
-      default:
-        return errorResult(`Unknown tool: ${name}`);
-    }
-  } catch (err) {
-    return errorResult(err.message || String(err));
-  }
-});
 
 function errorResult(message) {
   return { content: [{ type: "text", text: `Error: ${message}` }], isError: true };
@@ -229,11 +242,97 @@ async function toolRecentLog({ limit = 20 }) {
   return textResult({ count: rows.length, entries: rows.reverse() });
 }
 
-async function main() {
+// Applies db/schema.sql (idempotent — CREATE ... IF NOT EXISTS throughout)
+// then upserts every wiki/pages/*.md file into it. Safe to run on every
+// boot: it's how a fresh Render Postgres instance gets its tables, and how
+// the index picks up wiki changes that shipped since the last deploy.
+async function ensureSchemaAndSync() {
+  const schemaPath = path.resolve(__dirname, "..", "db", "schema.sql");
+  const schemaSql = fs.readFileSync(schemaPath, "utf-8");
+  await pool.query(schemaSql);
+  console.error("[llm-wiki-mcp] Schema ensured.");
+  const result = await runSync();
+  console.error(
+    `[llm-wiki-mcp] Synced — ${result.upserted} pages upserted, ${result.pruned} pruned, ` +
+      `${result.logCount} log entries.`
+  );
+}
+
+// Local/editor use: `npm start` with no PORT set talks MCP over stdio to
+// whatever spawned it (Claude Code, Claude Desktop, .mcp.json), exactly as
+// before.
+async function runStdio() {
+  const server = buildServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("[llm-wiki-mcp] MCP server running on stdio.");
 }
+
+// Hosted use (Render, or anywhere else that sets PORT): speak MCP over
+// Streamable HTTP at POST/GET/DELETE /mcp, per the spec's stateful-session
+// flow. One Server+transport pair per session, keyed by the
+// mcp-session-id header the SDK issues on initialize.
+async function runHttp(port) {
+  await ensureSchemaAndSync();
+
+  const sessions = new Map(); // sessionId -> { server, transport }
+
+  const httpServer = http.createServer(async (req, res) => {
+    if (req.method === "GET" && req.url === "/healthz") {
+      res.writeHead(200, { "Content-Type": "text/plain" });
+      res.end("ok");
+      return;
+    }
+
+    if (req.url !== "/mcp") {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("Not found. MCP endpoint is at /mcp.");
+      return;
+    }
+
+    try {
+      const sessionId = req.headers["mcp-session-id"];
+      let entry = sessionId ? sessions.get(sessionId) : undefined;
+
+      if (!entry && req.method === "POST") {
+        // New session: only valid on an initialize request, per spec.
+        const server = buildServer();
+        const transport = new StreamableHTTPServerTransport({
+          sessionIdGenerator: () => randomUUID(),
+          onsessioninitialized: (id) => {
+            sessions.set(id, entry);
+          },
+        });
+        transport.onclose = () => {
+          if (transport.sessionId) sessions.delete(transport.sessionId);
+        };
+        entry = { server, transport };
+        await server.connect(transport);
+      }
+
+      if (!entry) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "No active session for mcp-session-id." }));
+        return;
+      }
+
+      await entry.transport.handleRequest(req, res);
+    } catch (err) {
+      console.error("[llm-wiki-mcp] Request error:", err);
+      if (!res.headersSent) {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: err.message || String(err) }));
+      }
+    }
+  });
+
+  httpServer.listen(port, () => {
+    console.error(`[llm-wiki-mcp] MCP server listening on :${port} (POST/GET/DELETE /mcp)`);
+  });
+}
+
+const port = process.env.PORT ? Number(process.env.PORT) : null;
+const main = port ? () => runHttp(port) : runStdio;
 
 main().catch((err) => {
   console.error("[llm-wiki-mcp] Fatal error:", err);

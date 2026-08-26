@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE TABLE IF NOT EXISTS pages (
     slug        TEXT PRIMARY KEY,           -- filename without .md, e.g. "andrej-karpathy"
     title       TEXT NOT NULL,
-    type        TEXT NOT NULL CHECK (type IN ('concept', 'person', 'tool', 'source')),
+    type        TEXT NOT NULL CHECK (type IN ('concept', 'person', 'tool', 'source', 'organization')),
     tags        TEXT[] NOT NULL DEFAULT '{}',
     created     DATE,
     updated     DATE,

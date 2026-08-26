@@ -100,10 +100,12 @@ async function syncLog(client) {
   return lines.length;
 }
 
-async function main() {
+// Runs the sync. Does NOT close the shared pool — callers that own the
+// pool's lifecycle (e.g. index.js keeping it open to serve requests) are
+// expected to do that themselves, if at all.
+async function runSync() {
   if (!fs.existsSync(PAGES_DIR)) {
-    console.error(`[sync] Could not find ${PAGES_DIR}. Check WIKI_ROOT in .env.`);
-    process.exit(1);
+    throw new Error(`Could not find ${PAGES_DIR}. Check WIKI_ROOT.`);
   }
 
   const pages = parseAllPages(PAGES_DIR);
@@ -113,22 +115,32 @@ async function main() {
     const pageResult = await syncPages(client, pages);
     const logCount = await syncLog(client);
     await client.query("COMMIT");
-    console.log(
-      `[sync] OK — ${pageResult.upserted} pages upserted, ${pageResult.pruned} pruned, ` +
-        `${logCount} log entries synced.`
-    );
+    return { ...pageResult, logCount };
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;
   } finally {
     client.release();
-    await pool.end();
   }
 }
 
-main().catch((err) => {
-  console.error("[sync] Failed:", err);
-  process.exit(1);
-});
+// Only run + exit + close the pool when this file is executed directly
+// (`node sync.js` / `npm run sync`), not when imported by index.js.
+const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+if (isMain) {
+  runSync()
+    .then((result) => {
+      console.log(
+        `[sync] OK — ${result.upserted} pages upserted, ${result.pruned} pruned, ` +
+          `${result.logCount} log entries synced.`
+      );
+      return pool.end();
+    })
+    .catch(async (err) => {
+      console.error("[sync] Failed:", err);
+      await pool.end();
+      process.exit(1);
+    });
+}
 
-export { slugify };
+export { slugify, runSync };

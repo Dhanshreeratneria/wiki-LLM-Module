@@ -40,7 +40,7 @@ a plain-language request.
 ```markdown
 ---
 title: <Page Title>
-type: concept | person | tool | source
+type: concept | person | tool | source | organization
 tags: [tag1, tag2]
 created: <YYYY-MM-DD>
 updated: <YYYY-MM-DD>
