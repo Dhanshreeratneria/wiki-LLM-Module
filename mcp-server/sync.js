@@ -11,7 +11,8 @@ import { fileURLToPath } from "node:url";
 import { pool } from "./lib/db.js";
 import { parseAllPages, slugify } from "./lib/parseWiki.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const WIKI_ROOT = path.resolve(
   __dirname,
   process.env.WIKI_ROOT || ".."
@@ -126,7 +127,7 @@ async function runSync() {
 
 // Only run + exit + close the pool when this file is executed directly
 // (`node sync.js` / `npm run sync`), not when imported by index.js.
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === __filename;
 if (isMain) {
   runSync()
     .then((result) => {
