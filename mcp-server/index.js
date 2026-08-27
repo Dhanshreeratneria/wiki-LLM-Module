@@ -24,6 +24,18 @@ import { runSync } from "./sync.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const ACCESS_TIER = process.env.ACCESS_TIER || "all";
+if (!["all", "tier2-3", "tier3"].includes(ACCESS_TIER)) {
+  throw new Error('ACCESS_TIER must be "all", "tier2-3", or "tier3"');
+}
+
+function tierFilter(alias = "") {
+  const column = `${alias}tier`;
+  if (ACCESS_TIER === "tier2-3") return `${column} >= 2`;
+  if (ACCESS_TIER === "tier3") return `${column} = 3`;
+  return "TRUE";
+}
+
 // Each tool call needs its own Server instance in HTTP mode (the SDK ties a
 // Server to one transport/session); factor construction out so both the
 // stdio path and every HTTP session can build a fresh, identically wired one.
@@ -145,11 +157,12 @@ function textResult(obj) {
 
 async function toolSearch({ query, limit = 10 }) {
   const { rows } = await pool.query(
-    `SELECT slug, title, type, tags, summary,
+    `SELECT slug, title, type, tier, tags, summary,
             ts_rank(search_vec, plainto_tsquery('english', $1)) AS rank
      FROM pages
-     WHERE search_vec @@ plainto_tsquery('english', $1)
-        OR title ILIKE '%' || $1 || '%'
+     WHERE (${tierFilter()})
+       AND (search_vec @@ plainto_tsquery('english', $1)
+        OR title ILIKE '%' || $1 || '%')
      ORDER BY rank DESC
      LIMIT $2`,
     [query, limit]
@@ -160,7 +173,8 @@ async function toolSearch({ query, limit = 10 }) {
 async function resolveSlug(titleOrSlug) {
   const candidate = slugify(titleOrSlug);
   const { rows } = await pool.query(
-    `SELECT slug FROM pages WHERE slug = $1 OR title ILIKE $2 LIMIT 1`,
+    `SELECT slug FROM pages WHERE (${tierFilter()})
+     AND (slug = $1 OR title ILIKE $2) LIMIT 1`,
     [candidate, titleOrSlug]
   );
   return rows[0]?.slug || null;
@@ -172,7 +186,9 @@ async function toolGetPage({ title_or_slug }) {
 
   const { rows: pageRows } = await pool.query(`SELECT * FROM pages WHERE slug = $1`, [slug]);
   const { rows: links } = await pool.query(
-    `SELECT to_slug, to_title FROM page_links WHERE from_slug = $1`,
+    `SELECT pl.to_slug, pl.to_title
+     FROM page_links pl JOIN pages p ON p.slug = pl.to_slug
+     WHERE pl.from_slug = $1 AND (${tierFilter("p.")})`,
     [slug]
   );
   const { rows: sources } = await pool.query(
@@ -198,7 +214,7 @@ async function toolListPages({ type, tag, limit = 50 }) {
   const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
   params.push(limit);
   const { rows } = await pool.query(
-    `SELECT slug, title, type, tags, summary FROM pages ${where}
+    `SELECT slug, title, type, tier, tags, summary FROM pages ${where ? `${where} AND` : "WHERE"} (${tierFilter()})
      ORDER BY title LIMIT $${params.length}`,
     params
   );
@@ -210,15 +226,15 @@ async function toolRelated({ title_or_slug }) {
   if (!slug) return errorResult(`No page found matching "${title_or_slug}"`);
 
   const { rows: outgoing } = await pool.query(
-    `SELECT pl.to_slug, coalesce(p.title, pl.to_title) AS title, p.type
+    `SELECT pl.to_slug, coalesce(p.title, pl.to_title) AS title, p.type, p.tier
      FROM page_links pl LEFT JOIN pages p ON p.slug = pl.to_slug
-     WHERE pl.from_slug = $1`,
+     WHERE pl.from_slug = $1 AND (p.slug IS NULL OR ${tierFilter("p.")})`,
     [slug]
   );
   const { rows: incoming } = await pool.query(
-    `SELECT pl.from_slug AS slug, p.title, p.type
+    `SELECT pl.from_slug AS slug, p.title, p.type, p.tier
      FROM page_links pl JOIN pages p ON p.slug = pl.from_slug
-     WHERE pl.to_slug = $1`,
+     WHERE pl.to_slug = $1 AND (${tierFilter("p.")})`,
     [slug]
   );
   return textResult({ slug, outgoing_links: outgoing, incoming_links: incoming });

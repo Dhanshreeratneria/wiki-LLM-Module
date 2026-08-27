@@ -28,11 +28,12 @@ async function syncPages(client, pages) {
     const relPath = path.relative(WIKI_ROOT, page.filePath);
 
     await client.query(
-      `INSERT INTO pages (slug, title, type, tags, created, updated, summary, body, file_path, synced_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, now())
+      `INSERT INTO pages (slug, title, type, tier, tags, created, updated, summary, body, file_path, synced_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, now())
        ON CONFLICT (slug) DO UPDATE SET
          title = EXCLUDED.title,
          type = EXCLUDED.type,
+         tier = EXCLUDED.tier,
          tags = EXCLUDED.tags,
          created = EXCLUDED.created,
          updated = EXCLUDED.updated,
@@ -44,6 +45,7 @@ async function syncPages(client, pages) {
         page.slug,
         page.title,
         page.type,
+        page.tier,
         page.tags,
         page.created,
         page.updated,

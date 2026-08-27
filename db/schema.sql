@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS pages (
     slug        TEXT PRIMARY KEY,           -- filename without .md, e.g. "andrej-karpathy"
     title       TEXT NOT NULL,
     type        TEXT NOT NULL CHECK (type IN ('concept', 'person', 'tool', 'source', 'organization')),
+    tier        SMALLINT NOT NULL DEFAULT 1 CHECK (tier IN (1, 2, 3)),
     tags        TEXT[] NOT NULL DEFAULT '{}',
     created     DATE,
     updated     DATE,
@@ -21,6 +22,17 @@ CREATE TABLE IF NOT EXISTS pages (
     search_vec  TSVECTOR,                    -- generated full-text search vector
     synced_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'pages' AND column_name = 'tier'
+    ) THEN
+        ALTER TABLE pages ADD COLUMN tier SMALLINT NOT NULL DEFAULT 1;
+        ALTER TABLE pages ADD CONSTRAINT pages_tier_check CHECK (tier IN (1, 2, 3));
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS page_links (
     from_slug   TEXT NOT NULL REFERENCES pages(slug) ON DELETE CASCADE,

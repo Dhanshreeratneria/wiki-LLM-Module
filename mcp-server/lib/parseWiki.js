@@ -80,11 +80,16 @@ export function parsePageFile(filePath) {
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
   const slug = path.basename(filePath, ".md");
+  const tier = data.tier === undefined ? 1 : Number(data.tier);
+  if (![1, 2, 3].includes(tier)) {
+    throw new Error(`${filePath}: tier must be 1, 2, or 3`);
+  }
 
   return {
     slug,
     title: data.title || slug,
     type: data.type || "concept",
+    tier,
     tags: Array.isArray(data.tags) ? data.tags : [],
     created: data.created || null,
     updated: data.updated || null,

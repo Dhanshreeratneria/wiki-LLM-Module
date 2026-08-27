@@ -178,6 +178,65 @@ Once connected, you can ask Claude things like *"search the wiki for
 attention mechanism"* or *"what links to Andrej Karpathy's page?"* and it
 will call the MCP tools instead of reading every markdown file.
 
+## Deploy three access tiers on Render
+
+This repository includes `render.yaml`, which defines one PostgreSQL database
+and three Node web services. In Render, create a Blueprint from this repo and
+deploy it. Each service runs the same MCP code at `/mcp`, but receives a
+different `ACCESS_TIER` value:
+
+| Service | `ACCESS_TIER` | Visible pages |
+|---|---|---|
+| `llm-wiki-mcp-all-tiers` | `all` | Tiers 1, 2, and 3 |
+| `llm-wiki-mcp-tier2-3` | `tier2-3` | Tiers 2 and 3 |
+| `llm-wiki-mcp-tier3-only` | `tier3` | Tier 3 only |
+
+Add a `tier` field to each page's YAML frontmatter. Existing pages default to
+Tier 1 when synced, so classify sensitive pages explicitly before publishing:
+
+```yaml
+---
+title: Example Page
+type: concept
+tier: 3
+tags: [example]
+---
+```
+
+Audit classification before deploying:
+
+```bash
+cd mcp-server
+npm run tier-audit
+```
+
+The command prints the count in each tier and lists pages that still rely on
+the Tier 1 default. It exits with status 1 until every page has an explicit
+`tier: 1`, `tier: 2`, or `tier: 3`, which prevents a restricted endpoint from
+being published with an accidental access policy.
+
+Render supplies `DATABASE_URL` to all three services from the shared database.
+The server applies the tier filter to search, page fetches, listings, and
+related-page results. After changing wiki files, redeploy so the boot-time
+sync refreshes PostgreSQL. The resulting MCP URLs are the service URLs with
+`/mcp` appended. Use `/healthz` for a simple health check.
+
+With the service names in `render.yaml`, the resulting endpoints are:
+
+```text
+https://llm-wiki-mcp-all-tiers.onrender.com/mcp
+https://llm-wiki-mcp-tier2-3.onrender.com/mcp
+https://llm-wiki-mcp-tier3-only.onrender.com/mcp
+```
+
+`render_mcp_config.snippet.json` contains the same three URLs in MCP client
+configuration format. Merge only the endpoint you intend to trust into your
+Claude configuration, and protect the Render services with access controls or
+an authenticated proxy when the knowledge base is not public.
+
+Treat the tier URLs as separate trust boundaries: protect them with Render
+access controls or an authenticated proxy if the endpoints must not be public.
+
 ## Scaling notes
 
 Karpathy reported this holding up fine at roughly ~100 source articles and
