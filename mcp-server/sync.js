@@ -20,6 +20,14 @@ const WIKI_ROOT = path.resolve(
 const PAGES_DIR = path.join(WIKI_ROOT, "wiki", "pages");
 const LOG_FILE = path.join(WIKI_ROOT, "wiki", "log.md");
 
+async function ensureSchema() {
+  const schemaPath = path.join(WIKI_ROOT, "db", "schema.sql");
+  if (!fs.existsSync(schemaPath)) {
+    throw new Error(`Could not find ${schemaPath}. Check WIKI_ROOT.`);
+  }
+  await pool.query(fs.readFileSync(schemaPath, "utf-8"));
+}
+
 async function syncPages(client, pages) {
   const seenSlugs = new Set();
 
@@ -131,7 +139,8 @@ async function runSync() {
 // (`node sync.js` / `npm run sync`), not when imported by index.js.
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === __filename;
 if (isMain) {
-  runSync()
+  ensureSchema()
+    .then(() => runSync())
     .then((result) => {
       console.log(
         `[sync] OK — ${result.upserted} pages upserted, ${result.pruned} pruned, ` +
