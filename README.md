@@ -187,9 +187,9 @@ different `ACCESS_TIER` value:
 
 | Service | `ACCESS_TIER` | Visible pages |
 |---|---|---|
-| `llm-wiki-mcp-all-tiers` | `all` | Tiers 1, 2, and 3 |
-| `llm-wiki-mcp-tier2-3` | `tier2-3` | Tiers 2 and 3 |
-| `llm-wiki-mcp-tier3-only` | `tier3` | Tier 3 only |
+| MCP 1 (`llm-wiki-mcp-1`) | `all` | Tiers 1, 2, and 3 |
+| MCP 2 (`llm-wiki-mcp-2`) | `tier2-3` | Tiers 2 and 3 |
+| MCP 3 (`llm-wiki-mcp-3`) | `tier3` | Tier 3 only |
 
 Pages without an explicit `tier` use an automatic default based on their YAML
 `type`: `person` and `organization` pages are Tier 1, `concept` and `tool`
@@ -225,9 +225,9 @@ sync refreshes PostgreSQL. The resulting MCP URLs are the service URLs with
 With the service names in `render.yaml`, the resulting endpoints are:
 
 ```text
-https://llm-wiki-mcp-all-tiers.onrender.com/mcp
-https://llm-wiki-mcp-tier2-3.onrender.com/mcp
-https://llm-wiki-mcp-tier3-only.onrender.com/mcp
+MCP 1: https://llm-wiki-mcp-1.onrender.com/mcp
+MCP 2: https://llm-wiki-mcp-2.onrender.com/mcp
+MCP 3: https://llm-wiki-mcp-3.onrender.com/mcp
 ```
 
 `render_mcp_config.snippet.json` contains the same three URLs in MCP client

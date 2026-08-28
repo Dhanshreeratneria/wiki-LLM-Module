@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: llm-wiki-mcp-all-tiers
+    name: llm-wiki-mcp-1
     runtime: node
     rootDir: mcp-server
     buildCommand: npm ci
@@ -21,7 +21,7 @@ services:
         value: all
 
   - type: web
-    name: llm-wiki-mcp-tier2-3
+    name: llm-wiki-mcp-2
     runtime: node
     rootDir: mcp-server
     buildCommand: npm ci
@@ -36,7 +36,7 @@ services:
         value: tier2-3
 
   - type: web
-    name: llm-wiki-mcp-tier3-only
+    name: llm-wiki-mcp-3
     runtime: node
     rootDir: mcp-server
     buildCommand: npm ci

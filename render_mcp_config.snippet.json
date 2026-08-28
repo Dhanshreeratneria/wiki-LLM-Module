@@ -1,13 +1,13 @@
 {
   "mcpServers": {
-    "llm-wiki-all-tiers": {
-      "url": "https://llm-wiki-mcp-all-tiers.onrender.com/mcp"
+    "llm-wiki-mcp-1": {
+      "url": "https://llm-wiki-mcp-1.onrender.com/mcp"
     },
-    "llm-wiki-tier2-3": {
-      "url": "https://llm-wiki-mcp-tier2-3.onrender.com/mcp"
+    "llm-wiki-mcp-2": {
+      "url": "https://llm-wiki-mcp-2.onrender.com/mcp"
     },
-    "llm-wiki-tier3-only": {
-      "url": "https://llm-wiki-mcp-tier3-only.onrender.com/mcp"
+    "llm-wiki-mcp-3": {
+      "url": "https://llm-wiki-mcp-3.onrender.com/mcp"
     }
   }
 }
