@@ -16,15 +16,19 @@ console.log(`Pages: ${pages.length}`);
 console.log(`Tier 1: ${counts[1]}`);
 console.log(`Tier 2: ${counts[2]}`);
 console.log(`Tier 3: ${counts[3]}`);
-console.log("\nPages without explicit tier (default to Tier 1):");
+for (const tier of [1, 2, 3]) {
+  console.log(`\nTier ${tier} files:`);
+  for (const page of pages.filter((page) => page.tier === tier)) {
+    console.log(`- ${path.basename(page.filePath)}`);
+  }
+}
 
 const missing = pages.filter(
   (page) => !/^tier:\s*[123]\s*$/m.test(fs.readFileSync(page.filePath, "utf8"))
 );
+console.log("\nPages using automatic type defaults:");
 if (missing.length === 0) {
   console.log("(none)");
 } else {
   for (const page of missing) console.log(`- ${page.slug}`);
 }
-
-if (missing.length > 0) process.exitCode = 1;

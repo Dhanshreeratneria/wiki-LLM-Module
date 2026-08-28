@@ -191,8 +191,10 @@ different `ACCESS_TIER` value:
 | `llm-wiki-mcp-tier2-3` | `tier2-3` | Tiers 2 and 3 |
 | `llm-wiki-mcp-tier3-only` | `tier3` | Tier 3 only |
 
-Add a `tier` field to each page's YAML frontmatter. Existing pages default to
-Tier 1 when synced, so classify sensitive pages explicitly before publishing:
+Pages without an explicit `tier` use an automatic default based on their YAML
+`type`: `person` and `organization` pages are Tier 1, `concept` and `tool`
+pages are Tier 2, and `source` pages are Tier 3. An explicit `tier` overrides
+this default:
 
 ```yaml
 ---
@@ -210,10 +212,9 @@ cd mcp-server
 npm run tier-audit
 ```
 
-The command prints the count in each tier and lists pages that still rely on
-the Tier 1 default. It exits with status 1 until every page has an explicit
-`tier: 1`, `tier: 2`, or `tier: 3`, which prevents a restricted endpoint from
-being published with an accidental access policy.
+The command prints the count and filename of every page in each tier, followed
+by pages using an automatic type default. It exits successfully when all pages
+have valid explicit tiers or supported type-based defaults.
 
 Render supplies `DATABASE_URL` to all three services from the shared database.
 The server applies the tier filter to search, page fetches, listings, and

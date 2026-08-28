@@ -5,6 +5,17 @@ import matter from "gray-matter";
 const WIKILINK_RE = /\[\[([^\]|#]+)(?:\|[^\]]+)?\]\]/g;
 // Matches "- raw/some/path.md — some note" or "- raw/some/path.md - note"
 const SOURCE_LINE_RE = /^-\s+(raw\/\S+)\s*(?:[—-]\s*(.*))?$/;
+const DEFAULT_TIER_BY_TYPE = {
+  person: 1,
+  organization: 1,
+  concept: 2,
+  tool: 2,
+  source: 3,
+};
+
+export function getDefaultTier(type) {
+  return DEFAULT_TIER_BY_TYPE[type] || 1;
+}
 
 export function slugify(title) {
   return title
@@ -80,7 +91,8 @@ export function parsePageFile(filePath) {
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
   const slug = path.basename(filePath, ".md");
-  const tier = data.tier === undefined ? 1 : Number(data.tier);
+  const type = data.type || "concept";
+  const tier = data.tier === undefined ? getDefaultTier(type) : Number(data.tier);
   if (![1, 2, 3].includes(tier)) {
     throw new Error(`${filePath}: tier must be 1, 2, or 3`);
   }
@@ -88,7 +100,7 @@ export function parsePageFile(filePath) {
   return {
     slug,
     title: data.title || slug,
-    type: data.type || "concept",
+    type,
     tier,
     tags: Array.isArray(data.tags) ? data.tags : [],
     created: data.created || null,
