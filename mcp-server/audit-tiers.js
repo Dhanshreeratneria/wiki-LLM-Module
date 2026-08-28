@@ -19,7 +19,7 @@ console.log(`Tier 3: ${counts[3]}`);
 for (const tier of [1, 2, 3]) {
   console.log(`\nTier ${tier} files:`);
   for (const page of pages.filter((page) => page.tier === tier)) {
-    console.log(`- ${path.basename(page.filePath)}`);
+    console.log(`- ${path.basename(page.filePath)} (${page.type})`);
   }
 }
 
@@ -30,5 +30,7 @@ console.log("\nPages using automatic type defaults:");
 if (missing.length === 0) {
   console.log("(none)");
 } else {
-  for (const page of missing) console.log(`- ${page.slug}`);
+  for (const page of missing) {
+    console.log(`- ${path.basename(page.filePath)} (${page.type}) -> Tier ${page.tier}`);
+  }
 }
