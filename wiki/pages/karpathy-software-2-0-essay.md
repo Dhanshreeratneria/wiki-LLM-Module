@@ -4,6 +4,7 @@ type: source
 tags: [article]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 3
 ---
 
 # Karpathy: Software 2.0 (essay)

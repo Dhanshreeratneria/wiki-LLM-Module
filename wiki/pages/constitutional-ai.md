@@ -4,6 +4,7 @@ type: concept
 tags: [safety, alignment]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 2
 ---
 
 # Constitutional AI

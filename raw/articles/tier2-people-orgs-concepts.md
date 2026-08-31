@@ -1,0 +1,111 @@
+# Tier 2 source log — People, Organizations & Concepts
+
+Compiled from public biographical information, organizational disclosures, and established ML/NLP literature. Facts are limited to well-established, low-controversy claims (founding roles, well-known awards, canonical technique definitions).
+
+- **OpenAI**: An AI research and product company that created GPT and ChatGPT, founded in 2015.
+- **Anthropic**: An AI safety-focused research company that created the Claude model family, founded in 2021.
+- **Google DeepMind**: Google's AI research lab, formed from the 2023 merger of DeepMind and Google Brain.
+- **Meta AI Research (FAIR)**: Meta's fundamental AI research division, known for open research and the LLaMA model family.
+- **xAI**: Elon Musk's AI company, developer of the Grok model family.
+- **Mistral AI**: A French AI company known for open-weight and commercial LLMs.
+- **Cohere**: A Canadian AI company focused on enterprise-oriented language models.
+- **Stability AI**: A company known for open-weight generative models, including Stable Diffusion.
+- **Allen Institute for AI (AI2)**: A nonprofit AI research institute known for open language models and datasets.
+- **Microsoft Research**: Microsoft's research division, closely tied to OpenAI through investment and infrastructure.
+- **Nvidia**: A semiconductor company whose GPUs underpin most large-scale AI training and inference.
+- **Andrej Karpathy**: AI researcher and educator, former Tesla AI director and OpenAI founding member, known for public deep learning teaching.
+- **Ilya Sutskever**: Co-founder and former chief scientist of OpenAI, later founder of Safe Superintelligence Inc.
+- **Sam Altman**: CEO of OpenAI and a prominent figure in AI industry commentary and policy discussion.
+- **Dario Amodei**: Co-founder and CEO of Anthropic, previously VP of research at OpenAI.
+- **Daniela Amodei**: Co-founder and President of Anthropic.
+- **Demis Hassabis**: Co-founder and CEO of Google DeepMind, and a 2024 Nobel laureate in Chemistry for AlphaFold.
+- **Geoffrey Hinton**: AI researcher often called a 'godfather of deep learning', 2018 Turing Award winner.
+- **Yann LeCun**: AI researcher and former Chief AI Scientist at Meta, 2018 Turing Award winner for deep learning.
+- **Yoshua Bengio**: AI researcher and 2018 Turing Award winner, known for foundational deep learning work.
+- **Ashish Vaswani**: Lead author of the 'Attention Is All You Need' paper that introduced the Transformer architecture.
+- **Jeff Dean**: Chief Scientist at Google DeepMind and longtime Google Research leader.
+- **Fei-Fei Li**: Stanford AI researcher known for ImageNet and co-directing Stanford's Human-Centered AI institute.
+- **Elon Musk**: Entrepreneur and founder of xAI, also an early co-founder and funder of OpenAI.
+- **Satya Nadella**: CEO of Microsoft, which is a major investor in and infrastructure partner of OpenAI.
+- **Sundar Pichai**: CEO of Google and Alphabet, overseeing Google DeepMind's research direction.
+- **Jensen Huang**: Co-founder and CEO of Nvidia, central to the AI hardware buildout.
+- **Andrew Ng**: AI researcher and educator, co-founder of Coursera and Google Brain, founder of DeepLearning.AI.
+- **Chris Olah**: Anthropic researcher known for work on neural network interpretability.
+- **Percy Liang**: Stanford professor known for work on foundation models and the CRFM/HELM benchmark initiative.
+- **Transformer**: A neural network architecture based on self-attention, introduced in 2017 and now the basis of most modern LLMs.
+- **Attention Mechanism**: A neural network component that lets a model weigh the relevance of different input elements to each other.
+- **Self-Attention**: An attention variant where a sequence attends to itself, the core operation inside Transformer blocks.
+- **RLHF**: Reinforcement Learning from Human Feedback; a technique for fine-tuning models using human preference data.
+- **Constitutional AI**: An Anthropic training approach where a model critiques and revises its own outputs against a set of written principles.
+- **Scaling Laws**: Empirical relationships describing how model performance improves predictably with more data, compute, and parameters.
+- **Chinchilla Scaling**: A 2022 DeepMind finding that many LLMs were undertrained relative to their parameter count for the compute used.
+- **Mixture of Experts**: A model architecture that routes each input to a subset of specialized sub-networks rather than the whole model.
+- **Fine-tuning**: The process of further training a pretrained model on a narrower dataset to specialize its behavior.
+- **LoRA**: Low-Rank Adaptation; a parameter-efficient fine-tuning method that trains small low-rank matrices instead of full weights.
+- **Quantization**: A technique for reducing model precision (e.g. to 8-bit or 4-bit) to shrink size and speed up inference.
+- **Chain of Thought**: A prompting technique that encourages a model to reason step by step before giving a final answer.
+- **In-Context Learning**: The ability of a language model to adapt its behavior from examples given in the prompt, without weight updates.
+- **Retrieval-Augmented Generation**: An approach where a model's generation is grounded by retrieving relevant documents at inference time.
+- **Tokenization**: The process of splitting text into discrete units (tokens) that a language model processes.
+- **Byte Pair Encoding**: A subword tokenization algorithm commonly used to build vocabularies for language models.
+- **Embedding**: A learned vector representation of a word, token, or piece of data used throughout neural networks.
+- **Positional Encoding**: A technique for injecting sequence-order information into Transformer models, which otherwise process tokens in parallel.
+- **Context Window**: The maximum amount of text a language model can consider at once when generating a response.
+- **Hallucination**: A term for when a language model generates plausible-sounding but factually incorrect or fabricated content.
+- **Alignment**: The broad research goal of making AI systems behave in accordance with human intentions and values.
+- **AI Safety**: A field concerned with reducing risks from advanced AI systems, spanning technical and policy work.
+- **Interpretability**: Research aimed at understanding the internal computations and representations of neural networks.
+- **Mechanistic Interpretability**: A subfield of interpretability focused on reverse-engineering the precise algorithms neural networks implement.
+- **Emergent Abilities**: Capabilities that appear in large models but are largely absent in smaller models trained similarly.
+- **Foundation Model**: A large model trained on broad data that can be adapted to many downstream tasks.
+- **Agentic AI**: Systems where an LLM plans and executes multi-step tasks using tools, memory, and environment feedback.
+- **Multimodal Model**: A model capable of processing and/or generating more than one data modality, such as text and images.
+- **Diffusion Model**: A generative model class that learns to reverse a gradual noising process, widely used for image generation.
+- **GAN**: Generative Adversarial Network; a generative model framework pitting a generator against a discriminator.
+- **Autoregressive Model**: A model that generates sequences one element at a time, conditioning each step on previous outputs.
+- **Backpropagation**: The core algorithm for computing gradients in neural networks via the chain rule.
+- **Gradient Descent**: An optimization algorithm that iteratively adjusts parameters in the direction that reduces a loss function.
+- **Overfitting**: A modeling failure where a model fits training data well but generalizes poorly to new data.
+- **Reinforcement Learning**: A machine learning paradigm where an agent learns to act by receiving rewards or penalties from an environment.
+- **Supervised Learning**: A machine learning paradigm where a model learns from labeled input-output examples.
+- **Self-Supervised Learning**: A training paradigm where a model generates its own supervisory signal from unlabeled data.
+- **Neural Network**: A computational model composed of interconnected layers of simple units, loosely inspired by biological neurons.
+- **Convolutional Neural Network**: A neural network architecture using convolutional filters, historically dominant in computer vision.
+- **Recurrent Neural Network**: A neural network architecture that processes sequences by maintaining a hidden state across time steps.
+- **LSTM**: Long Short-Term Memory; an RNN variant designed to better capture long-range dependencies in sequences.
+- **Vector Database**: A database optimized for storing and querying high-dimensional embedding vectors by similarity.
+- **Prompt Engineering**: The practice of crafting inputs to elicit better or more reliable outputs from a language model.
+- **Red Teaming**: The practice of adversarially probing an AI system to find failures, vulnerabilities, or harmful behaviors.
+- **Model Context Protocol**: An open protocol, introduced by Anthropic, for connecting AI assistants to external tools and data sources.
+- **Turing Test**: A proposed test of a machine's ability to exhibit behavior indistinguishable from a human's, described by Alan Turing.
+- **Dartmouth Workshop**: The 1956 summer workshop widely credited with coining the term 'artificial intelligence'.
+- **AI Winter**: Periods of reduced funding and interest in AI research following unmet expectations, notably in the 1970s and late 1980s.
+- **Symbolic AI**: An early AI paradigm based on explicit rules and symbol manipulation rather than learned statistical patterns.
+- **Word2Vec**: An early influential technique for learning dense word embeddings from large text corpora.
+- **BERT**: A bidirectional Transformer encoder model from Google, influential for many NLP understanding tasks.
+- **GPT**: OpenAI's Generative Pretrained Transformer model family, the basis for ChatGPT.
+- **LLaMA**: Meta's family of open-weight large language models, widely used as a research and fine-tuning base.
+- **Gemini**: Google DeepMind's multimodal large language model family.
+- **Claude**: Anthropic's family of large language models, designed with an emphasis on safety and helpfulness.
+- **Mixtral**: Mistral AI's open-weight mixture-of-experts language model family.
+- **DeepSeek**: A Chinese AI lab known for open-weight reasoning-focused language models.
+- **Qwen**: Alibaba's family of open-weight large language models.
+- **AlphaGo**: DeepMind's reinforcement-learning system that defeated top human players at the game of Go.
+- **AlphaFold**: DeepMind's system for predicting protein 3D structure from amino acid sequence.
+- **Vision Transformer**: An adaptation of the Transformer architecture to image classification, treating image patches as tokens.
+- **CLIP**: OpenAI's model that jointly learns image and text representations via contrastive pretraining.
+- **Data Center**: Large-scale computing facilities that house the GPU/TPU clusters used to train frontier AI models.
+- **Compute Cluster**: A networked group of machines, often GPU-equipped, coordinated to run large-scale training jobs.
+- **Synthetic Data**: Artificially generated training data, often produced by another model, used to augment or replace real data.
+- **Knowledge Distillation**: A technique where a smaller 'student' model is trained to mimic a larger 'teacher' model's outputs.
+- **Model Weights**: The learned numerical parameters of a trained neural network.
+- **Open-Weight Model**: A model whose trained parameters are publicly released, though training code or data may not be.
+- **Benchmark**: A standardized task or dataset used to measure and compare model performance.
+- **MMLU**: Massive Multitask Language Understanding; a widely used benchmark testing knowledge across many academic subjects.
+- **HumanEval**: A benchmark of hand-written programming problems used to evaluate code-generation models.
+- **METR**: A nonprofit organization that evaluates frontier AI models for dangerous autonomous capabilities.
+- **MLCommons**: An industry consortium that develops shared ML benchmarks, including MLPerf.
+- **EleutherAI**: A grassroots research collective known for open-source language model and dataset releases.
+- **LAION**: A nonprofit that released large open datasets used to train text-to-image models like Stable Diffusion.
+- **Common Crawl**: A nonprofit that maintains a large, freely available web crawl used as training data for many LLMs.
+- **ImageNet**: A large labeled image dataset that catalyzed the deep learning boom in computer vision after 2012.

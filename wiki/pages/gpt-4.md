@@ -4,6 +4,7 @@ type: tool
 tags: [model]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 1
 ---
 
 # GPT-4

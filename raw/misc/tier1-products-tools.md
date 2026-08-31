@@ -1,0 +1,76 @@
+# Tier 1 source log — Products, Tools & Infra
+
+Compiled from public product documentation, official sites, and general technical knowledge of the AI tooling ecosystem as of the 2026 knowledge cutoff. No single article was scraped verbatim; each entry is an original one-line summary.
+
+- **ChatGPT**: OpenAI's consumer chat product built on GPT models, launched publicly in Nov 2022.
+- **Claude App**: Anthropic's consumer chat application for the Claude model family.
+- **Claude Code**: Anthropic's agentic command-line coding tool that lets Claude read, edit, and run code in a repo.
+- **GitHub Copilot**: AI pair-programming tool from GitHub/Microsoft that autocompletes and generates code in the editor.
+- **Cursor**: An AI-native code editor built on VS Code, focused on chat- and agent-based code editing.
+- **PyTorch**: An open-source deep learning framework originally from Meta, widely used for training and research.
+- **TensorFlow**: Google's open-source machine learning framework, an early standard for deep learning at scale.
+- **JAX**: A Google-developed numerical computing library combining NumPy-like syntax with autodiff and XLA compilation.
+- **CUDA**: Nvidia's parallel computing platform and API used to run general-purpose code on GPUs.
+- **Google Colab**: A hosted Jupyter notebook service from Google offering free and paid GPU/TPU access.
+- **Hugging Face Hub**: A platform for hosting, sharing, and downloading open machine learning models and datasets.
+- **Hugging Face Transformers**: An open-source Python library providing implementations of many pretrained transformer models.
+- **LangChain**: An open-source framework for building applications that chain together LLM calls, tools, and memory.
+- **LlamaIndex**: A data framework for connecting LLMs to external data sources for retrieval-augmented applications.
+- **Weights & Biases**: An experiment-tracking and MLOps platform used to log and visualize model training runs.
+- **vLLM**: An open-source high-throughput inference and serving engine for large language models.
+- **Ollama**: A tool for running open-weight LLMs locally on a personal machine.
+- **llama.cpp**: A C/C++ project enabling efficient inference of LLaMA-family models on consumer hardware.
+- **Midjourney**: A subscription-based AI image generation service accessed primarily via Discord.
+- **Stable Diffusion**: An open-weight text-to-image diffusion model originally released by Stability AI.
+- **DALL-E**: OpenAI's text-to-image generation model family, integrated into ChatGPT and the OpenAI API.
+- **Perplexity AI**: An AI-powered answer engine that combines web search with LLM-generated summaries and citations.
+- **GitHub Actions**: A CI/CD automation platform built into GitHub, often used to run ML pipelines.
+- **Docker**: A containerization platform widely used to package and deploy ML services reproducibly.
+- **Kubernetes**: An open-source container orchestration system used to run ML training and serving at scale.
+- **Jupyter Notebook**: An open-source interactive computing environment widely used for ML experimentation.
+- **VS Code**: Microsoft's free source code editor, a common environment for AI-assisted coding tools.
+- **Replit**: A browser-based coding platform that has added AI code-generation features (Replit Agent).
+- **Notion AI**: An AI writing assistant integrated into the Notion productivity/notes app.
+- **Microsoft Copilot**: Microsoft's AI assistant integrated across Windows, Office, and Bing/Edge.
+- **Google Gemini App**: Google's consumer chat app for its Gemini model family, formerly Bard.
+- **Meta AI**: Meta's consumer AI assistant integrated into Facebook, Instagram, and WhatsApp.
+- **Grok**: xAI's chatbot product, integrated into the X (Twitter) platform.
+- **Character.AI**: A platform for creating and chatting with customizable AI personas.
+- **Zapier**: An automation platform that connects apps via workflows, now including AI-driven automations.
+- **Pinecone**: A managed vector database service commonly used for retrieval-augmented generation.
+- **Chroma**: An open-source embedding/vector database designed for LLM application development.
+- **Weaviate**: An open-source vector database supporting semantic search and RAG pipelines.
+- **FAISS**: A library from Meta AI for efficient similarity search and clustering of dense vectors.
+- **OpenAI API**: OpenAI's developer platform for programmatic access to GPT and related models.
+- **Anthropic API**: Anthropic's developer platform for programmatic access to Claude models.
+- **Claude in Chrome**: An Anthropic browser extension that lets Claude act as a browsing agent.
+- **Claude for Excel**: An Anthropic extension that lets Claude work directly inside Excel spreadsheets.
+- **NotebookLM**: Google's AI research and note-taking tool that grounds answers in user-uploaded documents.
+- **Runway**: A creative AI platform focused on generative video and image editing tools.
+- **ElevenLabs**: A company and product known for AI voice synthesis and cloning tools.
+- **Whisper**: OpenAI's open-weight automatic speech recognition model.
+- **Sora**: OpenAI's text-to-video generation model.
+- **AutoGPT**: An early open-source experiment in autonomous, self-directed LLM agents.
+- **Streamlit**: A Python framework for quickly building data and ML web app interfaces.
+- **Gradio**: An open-source Python library for building demo web UIs around ML models.
+- **Anaconda**: A Python/R distribution and package manager popular in data science workflows.
+- **Amazon SageMaker**: AWS's managed platform for building, training, and deploying ML models.
+- **Vertex AI**: Google Cloud's managed platform for building and deploying ML and generative AI models.
+- **Azure AI Foundry**: Microsoft Azure's platform for building and deploying AI models and agents.
+- **Together AI**: A cloud platform offering hosted inference and fine-tuning for open-weight models.
+- **Groq**: A hardware/cloud company known for LPU chips offering very low-latency LLM inference.
+- **Modal**: A cloud platform for running Python and ML workloads with serverless GPU access.
+- **Ray**: An open-source framework for scaling Python and ML workloads across clusters.
+- **DeepSpeed**: A Microsoft library for efficient large-scale distributed model training.
+- **Triton**: OpenAI's language for writing custom GPU kernels used in ML systems.
+- **ONNX**: An open format for representing ML models to enable interoperability across frameworks.
+- **Slack**: A workplace messaging platform, relevant here via Claude Tag's Slack-based delegation interface.
+- **Zoom**: A video conferencing platform increasingly integrated with AI meeting-summary features.
+- **GitHub**: A code hosting and collaboration platform, the primary home for open-source ML projects.
+- **PapersWithCode**: A resource pairing research papers with their open-source code implementations.
+- **arXiv**: An open-access preprint repository widely used to share ML and AI research before peer review.
+- **Semantic Scholar**: An AI-powered academic search engine for scientific literature.
+- **Google Scholar**: A freely accessible search engine indexing scholarly literature across disciplines.
+- **Kaggle**: A platform for data science competitions, datasets, and shared notebooks.
+- **Overleaf**: A collaborative online LaTeX editor commonly used to write ML research papers.
+- **Zotero**: A free reference management tool used to collect and organize research citations.

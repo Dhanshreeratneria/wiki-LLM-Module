@@ -4,6 +4,7 @@ type: source
 tags: [video]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 3
 ---
 
 # Karpathy: Let's Build GPT (video)

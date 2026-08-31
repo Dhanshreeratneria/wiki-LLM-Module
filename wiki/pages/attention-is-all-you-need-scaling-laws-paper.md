@@ -4,6 +4,7 @@ type: source
 tags: [paper]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 3
 ---
 
 # Attention Is All You Need - Scaling Laws Paper

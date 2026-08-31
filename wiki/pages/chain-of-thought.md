@@ -4,6 +4,7 @@ type: concept
 tags: [prompting, reasoning]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 2
 ---
 
 # Chain of Thought

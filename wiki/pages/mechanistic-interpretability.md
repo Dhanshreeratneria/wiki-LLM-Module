@@ -1,0 +1,20 @@
+---
+title: Mechanistic Interpretability
+type: person
+tier: 2
+tags: [concept, safety]
+created: 2026-08-31
+updated: 2026-08-31
+---
+
+# Mechanistic Interpretability
+
+A subfield of interpretability focused on reverse-engineering the precise algorithms neural networks implement.
+
+## Related
+
+- [[Large Language Model]]
+
+## Sources
+
+- raw/articles/tier2-people-orgs-concepts.md — biographical/organizational/conceptual summary compiled from public sources and established ML literature

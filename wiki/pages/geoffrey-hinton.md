@@ -4,6 +4,7 @@ type: person
 tags: [ai, research, deep-learning]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 2
 ---
 
 # Geoffrey Hinton

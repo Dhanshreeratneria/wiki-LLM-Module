@@ -1,11 +1,13 @@
 {
   "mcpServers": {
-    "llm-wiki": {
-      "command": "node",
-      "args": ["mcp-server/index.js"],
-      "env": {
-        "DATABASE_URL": "postgresql://wiki_user:wiki_pass@localhost:5432/llm_wiki"
-      }
+    "llm-wiki-mcp-1": {
+      "url": "https://llm-wiki-mcp-1.onrender.com/mcp"
+    },
+    "llm-wiki-mcp-2": {
+      "url": "https://llm-wiki-mcp-2.onrender.com/mcp"
+    },
+    "llm-wiki-mcp-3": {
+      "url": "https://llm-wiki-mcp-3.onrender.com/mcp"
     }
   }
 }

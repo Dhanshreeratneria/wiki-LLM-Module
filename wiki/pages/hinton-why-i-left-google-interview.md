@@ -4,6 +4,7 @@ type: source
 tags: [interview]
 created: 2026-08-26
 updated: 2026-08-26
+tier: 3
 ---
 
 # Hinton: Why I Left Google (interview)
