@@ -9,7 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import http from "node:http";
-import { randomUUID } from "node:crypto";
+import { randomUUID, timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -25,8 +25,19 @@ import { runSync } from "./sync.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const ACCESS_TIER = process.env.ACCESS_TIER || "all";
+const MCP_AUTH_TOKEN = process.env.MCP_AUTH_TOKEN || "";
 if (!["all", "tier2-3", "tier3"].includes(ACCESS_TIER)) {
   throw new Error('ACCESS_TIER must be "all", "tier2-3", or "tier3"');
+}
+
+function isAuthorized(req) {
+  if (!MCP_AUTH_TOKEN) return false;
+  const [scheme, token] = (req.headers.authorization || "").split(" ");
+  if (scheme?.toLowerCase() !== "bearer" || !token) return false;
+
+  const expected = Buffer.from(MCP_AUTH_TOKEN);
+  const received = Buffer.from(token);
+  return expected.length === received.length && timingSafeEqual(expected, received);
 }
 
 function tierFilter(alias = "") {
@@ -297,6 +308,15 @@ async function runHttp(port) {
     if (req.method === "GET" && req.url === "/healthz") {
       res.writeHead(200, { "Content-Type": "text/plain" });
       res.end("ok");
+      return;
+    }
+
+    if (!isAuthorized(req)) {
+      res.writeHead(401, {
+        "Content-Type": "application/json",
+        "WWW-Authenticate": "Bearer",
+      });
+      res.end(JSON.stringify({ error: "Authentication required." }));
       return;
     }
 

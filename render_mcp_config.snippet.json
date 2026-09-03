@@ -1,13 +1,16 @@
 {
   "mcpServers": {
     "llm-wiki-mcp-1": {
-      "url": "https://wiki-llm-module-1.onrender.com/mcp"
+      "url": "https://wiki-llm-module-1.onrender.com/mcp",
+      "headers": { "Authorization": "Bearer YOUR_MCP_AUTH_TOKEN" }
     },
     "llm-wiki-mcp-2": {
-      "url": "https://llm-wiki-tier2-3.onrender.com/mcp"
+      "url": "https://llm-wiki-tier2-3.onrender.com/mcp",
+      "headers": { "Authorization": "Bearer YOUR_MCP_AUTH_TOKEN" }
     },
     "llm-wiki-mcp-3": {
-      "url": "https://llm-wiki-tier3.onrender.com/mcp"
+      "url": "https://llm-wiki-tier3.onrender.com/mcp",
+      "headers": { "Authorization": "Bearer YOUR_MCP_AUTH_TOKEN" }
     }
   }
 }

@@ -22,6 +22,32 @@ Your wiki is structured into **3 segregated MCP endpoints** with tier-based acce
 
 ## Deployment Steps
 
+### Authentication
+
+Hosted `/mcp` requests require a bearer token. This is token authentication,
+not a username/password login page; this repository has no web account UI or
+user database.
+
+1. Generate a strong token locally, for example with PowerShell:
+  ```powershell
+  $bytes = [byte[]]::new(32); [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes); [Convert]::ToHexString($bytes)
+  ```
+2. In each Render service, add the same secret environment variable:
+  ```
+  MCP_AUTH_TOKEN=<your-generated-token>
+  ```
+3. Put that token in the MCP client configuration as:
+  ```json
+  "headers": {
+    "Authorization": "Bearer YOUR_MCP_AUTH_TOKEN"
+  }
+  ```
+4. Restart or redeploy the Render services.
+
+`/healthz` remains public so Render can perform health checks. Requests to
+`/mcp` without the correct token receive `401 Unauthorized`. Keep the token
+out of Git and do not commit a real value to the configuration snippet.
+
 ### Step 1: Prepare the Repository
 
 Your code is ready. No changes needed to `index.js` or `sync.js`.
