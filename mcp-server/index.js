@@ -1,16 +1,21 @@
 // MCP server for the LLM Wiki.
 //
 // Exposes the PostgreSQL-indexed wiki/ folder as MCP tools so any MCP
-// client (Claude Desktop, Claude Code, etc.) can search and read the wiki
-// without loading every markdown file into context. wiki/*.md remains the
-// source of truth; this server only reads the Postgres index built by
-// sync.js — it never writes to raw/ or wiki/.
+// client (Claude Desktop, Claude Code, Claude.ai custom connectors, etc.)
+// can search and read the wiki without loading every markdown file into
+// context. wiki/*.md remains the source of truth; this server only reads
+// the Postgres index built by sync.js — it never writes to raw/ or wiki/.
+//
+// Auth model: this server is an OAuth 2.0 *resource server*. Auth0 is the
+// authorization server. We never implement /authorize or /token ourselves —
+// see lib/auth0.js. Set PORT to run in hosted/HTTP+OAuth mode (Render);
+// leave PORT unset to run over stdio for local/editor use, with no auth.
 
 import fs from "node:fs";
 import path from "node:path";
-import http from "node:http";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import express from "express";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -18,9 +23,15 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import {
+  mcpAuthMetadataRouter,
+  getOAuthProtectedResourceMetadataUrl,
+} from "@modelcontextprotocol/sdk/server/auth/router.js";
+import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js";
 import { pool } from "./lib/db.js";
 import { slugify } from "./lib/parseWiki.js";
 import { runSync } from "./sync.js";
+import { fetchAuth0Metadata, tokenVerifier } from "./lib/auth0.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -28,14 +39,6 @@ const ACCESS_TIER = process.env.ACCESS_TIER || "all";
 if (!["all", "tier2-3", "tier3"].includes(ACCESS_TIER)) {
   throw new Error('ACCESS_TIER must be "all", "tier2-3", or "tier3"');
 }
-// NOTE: no auth gate here. /mcp is open. A 401 + WWW-Authenticate: Bearer
-// response (even from a simple static-token check) makes Claude's custom
-// connector think this server offers OAuth and try to discover/register
-// against it, which fails since there's no OAuth authorization server here.
-// If you need to lock this down later, do it at the network level (Render
-// IP allowlist, or a reverse proxy) rather than via a 401 on /mcp itself —
-// or implement the full OAuth authorization-server endpoints Claude expects
-// (/.well-known/oauth-authorization-server, /register, /authorize, /token).
 
 function tierFilter(alias = "") {
   const column = `${alias}tier`;
@@ -284,7 +287,7 @@ async function ensureSchemaAndSync() {
 
 // Local/editor use: `npm start` with no PORT set talks MCP over stdio to
 // whatever spawned it (Claude Code, Claude Desktop, .mcp.json), exactly as
-// before.
+// before. No auth in this mode — it's already local-process-trust.
 async function runStdio() {
   const server = buildServer();
   const transport = new StdioServerTransport();
@@ -293,27 +296,51 @@ async function runStdio() {
 }
 
 // Hosted use (Render, or anywhere else that sets PORT): speak MCP over
-// Streamable HTTP at POST/GET/DELETE /mcp, per the spec's stateful-session
-// flow. One Server+transport pair per session, keyed by the
+// Streamable HTTP at POST/GET/DELETE /mcp, gated by an Auth0-issued bearer
+// token. One Server+transport pair per session, keyed by the
 // mcp-session-id header the SDK issues on initialize.
 async function runHttp(port) {
   await ensureSchemaAndSync();
 
+  // Render sets this automatically to the service's public https URL.
+  // Set PUBLIC_MCP_URL yourself if running somewhere that doesn't.
+  const publicBase = process.env.RENDER_EXTERNAL_URL || process.env.PUBLIC_MCP_URL;
+  if (!publicBase) {
+    throw new Error(
+      "Set PUBLIC_MCP_URL to this server's public https base URL (Render sets " +
+        "RENDER_EXTERNAL_URL automatically, so this is usually only needed locally)."
+    );
+  }
+  const mcpServerUrl = new URL("/mcp", publicBase);
+
+  const auth0Metadata = await fetchAuth0Metadata();
+  console.error(`[llm-wiki-mcp] Loaded Auth0 metadata for issuer ${auth0Metadata.issuer}`);
+
+  const app = express();
+  app.disable("x-powered-by");
+
+  // RFC 9728 protected-resource metadata + RFC 8414 authorization-server
+  // metadata, both re-published from Auth0. This is what lets Claude
+  // discover "this resource is protected, and here's who to talk to for a
+  // token" without us running any /authorize or /token endpoints ourselves.
+  app.use(
+    mcpAuthMetadataRouter({
+      oauthMetadata: auth0Metadata,
+      resourceServerUrl: mcpServerUrl,
+      resourceName: "LLM Wiki",
+    })
+  );
+
+  const authMiddleware = requireBearerAuth({
+    verifier: tokenVerifier,
+    resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(mcpServerUrl),
+  });
+
+  app.get("/healthz", (_req, res) => res.status(200).type("text/plain").send("ok"));
+
   const sessions = new Map(); // sessionId -> { server, transport }
 
-  const httpServer = http.createServer(async (req, res) => {
-    if (req.method === "GET" && req.url === "/healthz") {
-      res.writeHead(200, { "Content-Type": "text/plain" });
-      res.end("ok");
-      return;
-    }
-
-    if (req.url !== "/mcp") {
-      res.writeHead(404, { "Content-Type": "text/plain" });
-      res.end("Not found. MCP endpoint is at /mcp.");
-      return;
-    }
-
+  const mcpHandler = async (req, res) => {
     try {
       const sessionId = req.headers["mcp-session-id"];
       let entry = sessionId ? sessions.get(sessionId) : undefined;
@@ -335,23 +362,26 @@ async function runHttp(port) {
       }
 
       if (!entry) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: "No active session for mcp-session-id." }));
+        res.status(400).json({ error: "No active session for mcp-session-id." });
         return;
       }
 
-      await entry.transport.handleRequest(req, res);
+      await entry.transport.handleRequest(req, res, req.body);
     } catch (err) {
       console.error("[llm-wiki-mcp] Request error:", err);
       if (!res.headersSent) {
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: err.message || String(err) }));
+        res.status(500).json({ error: err.message || String(err) });
       }
     }
-  });
+  };
 
-  httpServer.listen(port, () => {
-    console.error(`[llm-wiki-mcp] MCP server listening on :${port} (POST/GET/DELETE /mcp)`);
+  // express.json() only for /mcp POST bodies; GET/DELETE carry no body.
+  app.post("/mcp", express.json(), authMiddleware, mcpHandler);
+  app.get("/mcp", authMiddleware, mcpHandler);
+  app.delete("/mcp", authMiddleware, mcpHandler);
+
+  app.listen(port, () => {
+    console.error(`[llm-wiki-mcp] MCP server listening on :${port} (POST/GET/DELETE /mcp, OAuth via Auth0)`);
   });
 }
 
