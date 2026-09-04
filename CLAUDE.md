@@ -96,3 +96,31 @@ When asked a question that the wiki might already answer:
   in the page rather than smoothing it over.
 - Idempotency matters: re-running ingest/compile on the same inputs should
   not create duplicate pages or duplicate log entries.
+
+## Cruz Brain — auto-saving conversations
+
+Every time a user asks Cruz Brain a question (via the `/cruz-brain` slash
+command), the user prompt and the assistant's exact response are appended
+to a thread file in `wiki/threads/`. This gives you a searchable,
+append-only log of every conversation.
+
+How it works:
+
+- File name: `{user-name}-{thread-name}-{YYYY-MM-DD}.md`
+- New thread → file is created with YAML frontmatter (`user_name`,
+  `thread_name`, `created`, `updated`) and a `# User — Thread — Date`
+  heading.
+- Existing thread for today + same user + same thread name → the new turn
+  is appended under a `## <timestamp>` section, and the `updated` field
+  in the frontmatter is bumped.
+- Storage is plain markdown in `wiki/threads/` (one file per
+  user/thread/day). No database for threads — they're meant to be
+  human-readable and hand-editable.
+- The MCP tool `cruz_brain_save_thread` performs the write; the slash
+  command in `.claude/commands/cruz-brain.md` calls it automatically.
+- You can list or read threads back via `cruz_brain_list_threads` and
+  `cruz_brain_get_thread`.
+
+Optional `--user=NAME` flag on `/cruz-brain` overrides the default user
+name (`claude-user`). The thread name is auto-derived from the first
+few words of the question if not supplied.

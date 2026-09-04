@@ -1,16 +1,14 @@
 {
+  "_comment": "OAuth (Auth0) is configured on all 3 Render services, so no Authorization header is hardcoded here. On first connect, the client will follow the 401 + WWW-Authenticate challenge from each URL and prompt an Auth0 login.",
   "mcpServers": {
     "llm-wiki-mcp-1": {
-      "url": "https://llm-wiki-mcp-1.onrender.com/mcp",
-      "headers": { "Authorization": "832af1f460488ff4d91cd413f34dc5895c1569fe8a9931e85fb20d2d2f70d802" }
+      "url": "https://llm-wiki-mcp-1.onrender.com/mcp"
     },
     "llm-wiki-mcp-2": {
-      "url": "https://llm-wiki-tier2-3.onrender.com/mcp",
-      "headers": { "Authorization": "58844c77c5588db68aaf1a27492d7f336b71bb9ce076213023f5911e975ab894" }
+      "url": "https://llm-wiki-mcp-2.onrender.com/mcp"
     },
     "llm-wiki-mcp-3": {
-      "url": "https://llm-wiki-tier3.onrender.com/mcp",
-      "headers": { "Authorization": "9635a4720e5d8795da12e1dbd95653a0f37456d9cc8abd4a6c00250084a199c6" }
+      "url": "https://llm-wiki-mcp-3.onrender.com/mcp"
     }
   }
 }
