@@ -30,9 +30,9 @@
 - **Three MCP endpoints** already defined in `.mcp.json`:
   ```json
   {
-    "llm-wiki-mcp-1": "https://llm-wiki-mcp-1.onrender.com/mcp",
-    "llm-wiki-mcp-2": "https://llm-wiki-mcp-2.onrender.com/mcp",
-    "llm-wiki-mcp-3": "https://llm-wiki-mcp-3.onrender.com/mcp"
+    "llm-wiki-mcp-1": "https://wiki-llm-module-1.onrender.com/mcp",
+    "llm-wiki-mcp-2": "https://llm-wiki-tier2-3.onrender.com/mcp",
+    "llm-wiki-mcp-3": "https://llm-wiki-tier3.onrender.com/mcp"
   }
   ```
 

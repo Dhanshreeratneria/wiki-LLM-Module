@@ -311,6 +311,7 @@ async function runHttp(port) {
       return;
     }
 
+
     if (!isAuthorized(req)) {
       res.writeHead(401, {
         "Content-Type": "application/json",

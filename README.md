@@ -225,9 +225,9 @@ sync refreshes PostgreSQL. The resulting MCP URLs are the service URLs with
 With the service names in `render.yaml`, the resulting endpoints are:
 
 ```text
-MCP 1: https://llm-wiki-mcp-1.onrender.com/mcp
-MCP 2: https://llm-wiki-mcp-2.onrender.com/mcp
-MCP 3: https://llm-wiki-mcp-3.onrender.com/mcp
+MCP 1: https://wiki-llm-module-1.onrender.com/mcp
+MCP 2: https://llm-wiki-tier2-3.onrender.com/mcp
+MCP 3: https://llm-wiki-tier3.onrender.com/mcp
 ```
 
 `render_mcp_config.snippet.json` contains the same three URLs in MCP client

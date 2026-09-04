@@ -75,7 +75,7 @@ You have three deployment URLs already configured. For each, follow this process
    DATABASE_URL=<your-postgres-connection-string>
    ```
 6. Deploy
-7. Update `.mcp.json` if the URL differs from `https://llm-wiki-mcp-1.onrender.com/mcp`
+7. Update `.mcp.json` if the URL differs from `https://wiki-llm-module-1.onrender.com/mcp`
 
 #### **MPC 2 — Tier 2-3 Only (llm-wiki-mcp-2)**
 
@@ -115,13 +115,13 @@ Test each endpoint to confirm segregation works:
 
 ```bash
 # Test MCP 1 (should return all tiers)
-curl https://llm-wiki-mcp-1.onrender.com/mcp
+curl https://wiki-llm-module-1.onrender.com/mcp
 
 # Test MCP 2 (should return tier >= 2 only)
-curl https://llm-wiki-mcp-2.onrender.com/mcp
+curl https://llm-wiki-tier2-3.onrender.com/mcp
 
 # Test MCP 3 (should return tier = 3 only)
-curl https://llm-wiki-mcp-3.onrender.com/mcp
+curl https://llm-wiki-tier3.onrender.com/mcp
 ```
 
 Or use the MCP tools in Claude Desktop/Code:
@@ -137,13 +137,13 @@ Your `.mcp.json` currently points to:
 {
   "mcpServers": {
     "llm-wiki-mcp-1": {
-      "url": "https://llm-wiki-mcp-1.onrender.com/mcp"
+      "url": "https://wiki-llm-module-1.onrender.com/mcp"
     },
     "llm-wiki-mcp-2": {
-      "url": "https://llm-wiki-mcp-2.onrender.com/mcp"
+      "url": "https://llm-wiki-tier2-3.onrender.com/mcp"
     },
     "llm-wiki-mcp-3": {
-      "url": "https://llm-wiki-mcp-3.onrender.com/mcp"
+      "url": "https://llm-wiki-tier3.onrender.com/mcp"
     }
   }
 }

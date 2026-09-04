@@ -4,17 +4,17 @@
 
 ### MCP 1: Full Access (Tier 1 + 2 + 3)
 ```
-https://llm-wiki-mcp-1.onrender.com/mcp
+https://wiki-llm-module-1.onrender.com/mcp
 ```
 
 ### MCP 2: Intermediate + Research (Tier 2 + 3)
 ```
-https://llm-wiki-mcp-2.onrender.com/mcp
+https://llm-wiki-tier2-3.onrender.com/mcp
 ```
 
 ### MCP 3: Research Only (Tier 3)
 ```
-https://llm-wiki-mcp-3.onrender.com/mcp
+https://llm-wiki-tier3.onrender.com/mcp
 ```
 
 > These must match whatever hostnames are actually live on Render. Check
@@ -46,13 +46,13 @@ Add to `claude_desktop_config.json`:
 {
   "mcpServers": {
     "llm-wiki-mcp-1": {
-      "url": "https://llm-wiki-mcp-1.onrender.com/mcp"
+      "url": "https://wiki-llm-module-1.onrender.com/mcp"
     },
     "llm-wiki-mcp-2": {
-      "url": "https://llm-wiki-mcp-2.onrender.com/mcp"
+      "url": "https://llm-wiki-tier2-3.onrender.com/mcp"
     },
     "llm-wiki-mcp-3": {
-      "url": "https://llm-wiki-mcp-3.onrender.com/mcp"
+      "url": "https://llm-wiki-tier3.onrender.com/mcp"
     }
   }
 }
@@ -68,13 +68,13 @@ Add to `.mcp.json`:
 {
   "mcpServers": {
     "llm-wiki-mcp-1": {
-      "url": "https://llm-wiki-mcp-1.onrender.com/mcp"
+      "url": "https://wiki-llm-module-1.onrender.com/mcp"
     },
     "llm-wiki-mcp-2": {
-      "url": "https://llm-wiki-mcp-2.onrender.com/mcp"
+      "url": "https://llm-wiki-tier2-3.onrender.com/mcp"
     },
     "llm-wiki-mcp-3": {
-      "url": "https://llm-wiki-mcp-3.onrender.com/mcp"
+      "url": "https://llm-wiki-tier3.onrender.com/mcp"
     }
   }
 }
