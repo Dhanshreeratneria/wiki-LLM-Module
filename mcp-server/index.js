@@ -31,7 +31,7 @@ import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middlew
 import { pool } from "./lib/db.js";
 import { slugify } from "./lib/parseWiki.js";
 import { runSync } from "./sync.js";
-import { fetchAuth0Metadata, tokenVerifier } from "./lib/auth0.js";
+import { fetchAuth0Metadata, tokenVerifier } from "./lib/Auth0.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

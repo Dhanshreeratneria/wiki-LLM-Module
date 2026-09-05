@@ -19,8 +19,12 @@ services:
           property: connectionString
       - key: ACCESS_TIER
         value: all
-      - key: MCP_AUTH_TOKEN
-        sync: false
+      - key: REQUIRE_OAUTH
+        value: "true"
+      - key: AUTH0_DOMAIN
+        value: dev-mmyrhtmiz68y8i1e.us.auth0.com
+      - key: AUTH0_AUDIENCE
+        value: https://wiki-llm-module-1.onrender.com/mcp
 
   - type: web
     name: llm-wiki-mcp-2
